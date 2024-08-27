@@ -1,4 +1,4 @@
-#  Aplicación de visión computarizada y modelos de procesamiento de lenguaje natural para la interpretación de Lenguaje de señas Chileno (LSCh) con la finalidad de lograr una mejor inclusión de personas sordas en el sistema de salud
+# Combinando visión artificial y modelos de lenguaje para interpretación de lenguaje de señas
 
 ### Integrantes:
 
