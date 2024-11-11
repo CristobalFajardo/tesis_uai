@@ -29,9 +29,9 @@ print(f"class_refs shape: {class_refs.shape}")
 classes = []
 for i, ref in enumerate(class_refs):
     try:
-        ref_value = mat[ref[0]][()]  # Acceder al valor de la referencia
+        ref_value = mat[ref[0]][()] # Acceder al valor de la referencia
         if isinstance(ref_value, np.ndarray):
-            ref_value = ref_value[0]  # Acceder al primer elemento si es un array
+            ref_value = ref_value[0] # Acceder al primer elemento si es un array
         actual_class = int(ref_value)
         classes.append(actual_class)
         if i < 5:
@@ -54,7 +54,7 @@ print(f"X_train shape: {X_train.shape}, y_train shape: {y_train.shape}")
 print(f"X_test shape: {X_test.shape}, y_test shape: {y_test.shape}")
 
 # Ajustar la forma de X_train y X_test
-if len(X_train.shape) == 2:  # Si X_train es 2D, agregamos una dimensión de tiempo
+if len(X_train.shape) == 2: # Si X_train es 2D, agregamos una dimensión de tiempo
     X_train = np.expand_dims(X_train, axis=1)
     X_test = np.expand_dims(X_test, axis=1)
 print(f"Forma de X_train después del ajuste: {X_train.shape}")
@@ -75,6 +75,7 @@ print("Archivo .mat cerrado.")
 model = Sequential()
 
 # Capa LSTM para secuencias temporales
+
 model.add(LSTM(128, input_shape=(X_train.shape[1], X_train.shape[2]), return_sequences=True))
 model.add(Dropout(0.5))
 model.add(LSTM(64))
