@@ -1,10 +1,14 @@
 import os
 from livekit import api
 from flask import Flask
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route('/getToken')
+@cross_origin()
 def getToken():
   token = api.AccessToken(os.getenv('LIVEKIT_API_KEY'), os.getenv('LIVEKIT_API_SECRET')) \
     .with_identity("identity") \

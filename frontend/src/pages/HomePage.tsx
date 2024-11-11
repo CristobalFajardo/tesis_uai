@@ -6,7 +6,7 @@ export default function HomePage () {
 
       <div className="max-w-2xl mx-auto p-2">
         <h1 className="text-4xl mb-8">
-          Combinando visión artificial y modelos de lenguaje para interpretación de lenguaje de señas
+          Combinando visión artificial y modelos de lenguaje para interpretación de lengua de señas
         </h1>
         <h2 className="text-2xl mb-4">
           Proyecto de Tesis MIA. Universidad Adolfo Ibáñez

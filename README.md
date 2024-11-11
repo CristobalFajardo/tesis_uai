@@ -1,4 +1,4 @@
-# Combinando visión artificial y modelos de lenguaje para interpretación de lenguaje de señas
+# Combinando visión artificial y modelos de lenguaje para interpretación de lengua de señas
 
 ### Integrantes:
 
