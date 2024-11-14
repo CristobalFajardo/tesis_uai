@@ -1,5 +1,9 @@
-livekit
-livekit-api
 flask
-python-dotenv
+aiortc
+aiohttp
+aioflask
+flask-socketio
 flask-cors
+eventlet
+mediapipe
+opencv-python==4.5.5.64
