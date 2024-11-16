@@ -153,18 +153,22 @@ def train_model(output = './hand_detection.h5'):
   X_train, X_test, y_train, y_test = train_test_split(landmarks_data_padded, labels_encoded, test_size=0.2, random_state=42)
 
   # Paso 3: Entrenar el Modelo LSTM
-  model = Sequential()
-  model.add(LSTM(128, input_shape=(X_train.shape[1], X_train.shape[2]), return_sequences=True))
-  model.add(Dropout(0.5))
-  model.add(LSTM(64))
-  model.add(Dropout(0.5))
-  model.add(Dense(32, activation='relu'))
-  model.add(Dense(y_train.shape[1], activation='softmax'))
+  model = Sequential([
+    LSTM(64, return_sequences=True, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])),
+    LSTM(64, activation='relu'),
+    Dense(128, activation='relu'),
+    Dropout(0.5),
+    Dense(y_train.shape[1], activation='softmax')
+  ])
 
   model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
   # Entrenar el modelo con más épocas y logs detallados
   model.fit(X_train, y_train, epochs=30, batch_size=16, validation_data=(X_test, y_test), verbose=2)
+
+  # Evaluate on test data
+  test_loss, test_accuracy = model.evaluate(X_test, y_test)
+  print(f"Test Accuracy: {test_accuracy:.2f}")
 
   # Guardar el modelo entrenado
   model.save(output)
