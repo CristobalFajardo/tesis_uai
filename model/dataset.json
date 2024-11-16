@@ -1,0 +1,16 @@
+{
+  "words": [
+    {
+      "label": "por favor",
+      "path": "../dataset/1-por-favor"
+    },
+    {
+      "label": "gracias",
+      "path": "../dataset/2-gracias"
+    },
+    {
+      "label": "nombre",
+      "path": "../dataset/3-nombre"
+    }
+  ]
+}

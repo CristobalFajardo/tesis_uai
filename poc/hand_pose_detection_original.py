@@ -73,6 +73,7 @@ for word_folder in os.listdir(dataset_folder):
 
             # Solo añadir secuencias válidas para el aumento de datos
             if video_landmarks:
+                # Convert the list of video landmarks to a numpy array for further processing
                 video_landmarks = np.array(video_landmarks)
                 print(f"Estructura original de secuencia video_landmarks: {video_landmarks.shape}")
                 for augmented_sequence in augment_sequence(video_landmarks):
