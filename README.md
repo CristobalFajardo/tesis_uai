@@ -8,6 +8,18 @@
 
 # Getting started
 
+### Entrenar modelo
+`cd model`
+`python -m venv env`
+`pip install -r requirements.txt`
+`python train.py`
+
+### Probar modelo
+`cd model`
+`python -m venv env`
+`pip install -r requirements.txt`
+`python test.py`
+
 ### Iniciar el servidor
 
 `cd server`
