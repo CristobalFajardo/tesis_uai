@@ -6,10 +6,15 @@ import mediapipe as mp
 from collections import deque, Counter
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, precision_score
+import seaborn as sns
+import matplotlib.pyplot as plt
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional
+from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
+
 
 # Init MediaPipe Hands
 mp_hands = mp.solutions.hands
@@ -44,6 +49,13 @@ def augment_sequence(sequence):
   # augmented_sequences.append(inverted_sequence)
 
   return augmented_sequences
+
+def normalize_landmarks(landmarks):
+  landmarks = np.array(landmarks)
+  min_vals = np.min(landmarks, axis=0)
+  max_vals = np.max(landmarks, axis=0)
+  normalized_landmarks = (landmarks - min_vals) / (max_vals - min_vals)
+  return normalized_landmarks
 
 def train_model(output = './hand_detection.h5'):
   # Load dataset details from the JSON file
@@ -93,7 +105,8 @@ def train_model(output = './hand_detection.h5'):
             frame_landmarks.extend([0] * (TOTAL_POINTS - len(frame_landmarks)))
           
           if len(frame_landmarks) == TOTAL_POINTS:
-            video_landmarks.append(frame_landmarks) 
+            normalized_landmarks = normalize_landmarks(frame_landmarks)
+            video_landmarks.append(normalized_landmarks) 
 
         # Write the frame with hand landmarks
         out.write(frame)
@@ -154,17 +167,14 @@ def train_model(output = './hand_detection.h5'):
 
   # Paso 3: Entrenar el Modelo LSTM
   model = Sequential([
-    LSTM(64, return_sequences=True, activation='relu', input_shape=(X_train.shape[1], X_train.shape[2])),
-    LSTM(64, activation='relu'),
+    Bidirectional(LSTM(64, return_sequences=True, activation='relu'), input_shape=(X_train.shape[1], X_train.shape[2])),
+    Bidirectional(LSTM(64, activation='relu')),
     Dense(128, activation='relu'),
     Dropout(0.5),
     Dense(y_train.shape[1], activation='softmax')
   ])
 
   model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
-
-  # Entrenar el modelo con más épocas y logs detallados
-  model.fit(X_train, y_train, epochs=30, batch_size=16, validation_data=(X_test, y_test), verbose=2)
 
   # Evaluate on test data
   test_loss, test_accuracy = model.evaluate(X_test, y_test)
@@ -173,5 +183,34 @@ def train_model(output = './hand_detection.h5'):
   # Guardar el modelo entrenado
   model.save(output)
 
+  # Define early stopping
+  early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+  # Entrenar el modelo con más épocas y logs detallados
+  model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test), verbose=2, callbacks=[early_stopping])
+
+  # Guardar el modelo entrenado
+  model.save(output)
+
+  # Generate predictions for the test set
+  y_pred = model.predict(X_test)
+  y_pred_classes = np.argmax(y_pred, axis=1)
+  y_true_classes = np.argmax(y_test, axis=1)
+
+  # Compute the confusion matrix
+  cm = confusion_matrix(y_true_classes, y_pred_classes)
+
+  # Compute the precision score
+  precision = precision_score(y_true_classes, y_pred_classes, average='weighted')
+  print(f'Precision: {precision:.4f}')
+
+  # Plot the confusion matrix
+  plt.figure(figsize=(10, 8))
+  sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
+  plt.xlabel('Predicted')
+  plt.ylabel('True')
+  plt.title('Confusion Matrix')
+  plt.show()
+  
 if __name__ == "__main__":
   train_model()
