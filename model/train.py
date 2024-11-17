@@ -6,6 +6,9 @@ import mediapipe as mp
 from collections import deque, Counter
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, precision_score
+import seaborn as sns
+import matplotlib.pyplot as plt
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
@@ -172,6 +175,26 @@ def train_model(output = './hand_detection.h5'):
 
   # Guardar el modelo entrenado
   model.save(output)
+
+  # Generate predictions for the test set
+  y_pred = model.predict(X_test)
+  y_pred_classes = np.argmax(y_pred, axis=1)
+  y_true_classes = np.argmax(y_test, axis=1)
+
+  # Compute the confusion matrix
+  cm = confusion_matrix(y_true_classes, y_pred_classes)
+
+  # Compute the precision score
+  precision = precision_score(y_true_classes, y_pred_classes, average='weighted')
+  print(f'Precision: {precision:.4f}')
+
+  # Plot the confusion matrix
+  plt.figure(figsize=(10, 8))
+  sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
+  plt.xlabel('Predicted')
+  plt.ylabel('True')
+  plt.title('Confusion Matrix')
+  plt.show()
 
 if __name__ == "__main__":
   train_model()
