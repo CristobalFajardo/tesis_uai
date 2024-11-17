@@ -15,6 +15,7 @@ from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
 
+
 # Init MediaPipe Hands
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=2)  # Allow detection of up to two hands
@@ -39,15 +40,14 @@ def augment_sequence(sequence):
   shifted_sequence = np.where(np.any(sequence != 0), sequence + np.random.normal(0, 0.005, size=sequence.shape), sequence)
   augmented_sequences.append(shifted_sequence)
 
-  # scale the sequence
-  # scaled_sequence = np.where(np.any(sequence != 0), sequence * np.random.uniform(0.9, 1.1, size=sequence.shape), sequence)
-  # augmented_sequences.append(scaled_sequence)
-
-  # invert x coordinate
-  # inverted_sequence = np.where(np.any(sequence != 0), sequence[:, ::-1], sequence)
-  # augmented_sequences.append(inverted_sequence)
-
   return augmented_sequences
+
+def normalize_landmarks(landmarks):
+  landmarks = np.array(landmarks)
+  min_vals = np.min(landmarks, axis=0)
+  max_vals = np.max(landmarks, axis=0)
+  normalized_landmarks = (landmarks - min_vals) / (max_vals - min_vals)
+  return normalized_landmarks
 
 def train_model(output = './hand_detection.h5'):
   # Load dataset details from the JSON file
@@ -97,7 +97,8 @@ def train_model(output = './hand_detection.h5'):
             frame_landmarks.extend([0] * (TOTAL_POINTS - len(frame_landmarks)))
           
           if len(frame_landmarks) == TOTAL_POINTS:
-            video_landmarks.append(frame_landmarks) 
+            normalized_landmarks = normalize_landmarks(frame_landmarks)
+            video_landmarks.append(normalized_landmarks) 
 
         # Write the frame with hand landmarks
         out.write(frame)
@@ -157,13 +158,13 @@ def train_model(output = './hand_detection.h5'):
   X_train, X_test, y_train, y_test = train_test_split(landmarks_data_padded, labels_encoded, test_size=0.2, random_state=42)
 
   # Paso 3: Entrenar el Modelo LSTM
-  model = Sequential()
-  model.add(LSTM(128, input_shape=(X_train.shape[1], X_train.shape[2]), return_sequences=True))
-  model.add(Dropout(0.5))
-  model.add(LSTM(64))
-  model.add(Dropout(0.5))
-  model.add(Dense(32, activation='relu'))
-  model.add(Dense(y_train.shape[1], activation='softmax'))
+  model = Sequential([
+    Bidirectional(LSTM(64, return_sequences=True, activation='relu'), input_shape=(X_train.shape[1], X_train.shape[2])),
+    Bidirectional(LSTM(64, activation='relu')),
+    Dense(128, activation='relu'),
+    Dropout(0.5),
+    Dense(y_train.shape[1], activation='softmax')
+  ])
 
   model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 

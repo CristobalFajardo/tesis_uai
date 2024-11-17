@@ -9,12 +9,19 @@ import json
 
 COORDS_SIZE = 21
 TOTAL_POINTS = COORDS_SIZE * 3 * 2 # 21 points * 3 coordinates * 2 hands
-CONFIDENCE_THRESHOLD = 0.6
+CONFIDENCE_THRESHOLD = 0.4
 SEQUENCE_LENGTH = 30
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands(max_num_hands=2)  # Allow detection of up to two hands
 mp_drawing = mp.solutions.drawing_utils
+
+def normalize_landmarks(landmarks):
+    landmarks = np.array(landmarks)
+    min_vals = np.min(landmarks, axis=0)
+    max_vals = np.max(landmarks, axis=0)
+    normalized_landmarks = (landmarks - min_vals) / (max_vals - min_vals)
+    return normalized_landmarks
 
 def test_model(model_path = './hand_detection.h5'):
   with open('dataset.json', 'r') as f:
@@ -55,7 +62,8 @@ def test_model(model_path = './hand_detection.h5'):
         hand_positions.extend([0] * (TOTAL_POINTS - len(hand_positions)))
 
       if len(hand_positions) == TOTAL_POINTS:
-        frame_sequence.append(hand_positions)
+        normalized_hand_positions = normalize_landmarks(hand_positions)
+        frame_sequence.append(normalized_hand_positions)
 
         if len(frame_sequence) == SEQUENCE_LENGTH:
           input_data = np.array(frame_sequence).reshape(1, SEQUENCE_LENGTH, TOTAL_POINTS)

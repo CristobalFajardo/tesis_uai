@@ -67,7 +67,7 @@ const StreamPage = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex flex-col justify-center items-center h-screen">
       <canvas
         ref={canvasRef}
         width="800"
@@ -77,6 +77,10 @@ const StreamPage = () => {
           height: '600px',
           transform: 'scaleX(-1)',
         }}></canvas>
+
+        <div className="text-2xl pt-8">
+          Gracias
+        </div>
     </div>
   );
 };
