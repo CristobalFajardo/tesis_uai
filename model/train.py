@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
 
 # Init MediaPipe Hands
@@ -163,8 +164,11 @@ def train_model(output = './hand_detection.h5'):
 
   model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
+  # Define early stopping
+  early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
   # Entrenar el modelo con más épocas y logs detallados
-  model.fit(X_train, y_train, epochs=30, batch_size=16, validation_data=(X_test, y_test), verbose=2)
+  model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test), verbose=2, callbacks=[early_stopping])
 
   # Guardar el modelo entrenado
   model.save(output)
