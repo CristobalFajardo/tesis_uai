@@ -7,6 +7,7 @@
 \renewcommand{\refname}{Bibliografía}
 \setlength{\parskip}{1em}
 \setlength{\parindent}{0em}
+\usepackage{amsmath}
 
 \begin{document}
 
@@ -46,27 +47,102 @@ modelo de lenguaje (LLM) puede alcanzar una tasa de acierto mayor al 90\%, con u
 
 \subsection{Objetivos}
 
-Lorem ipsum dolor sit amet
-
 \subsubsection{General}
 
-Lorem ipsum dolor sit amet
+Diseñar e implementar un sistema automatizado que interprete LSCh mediante visión artificial y procesamiento de lenguaje natural, para mejorar el acceso a servicios de salud por parte de personas sordas.
+
 
 \subsubsection{Específicos}
 
-Lorem ipsum dolor sit amet
+\begin{enumerate}
+    \item Investigar tecnologías avanzadas aplicadas al reconocimiento de lenguas de señas, incluyendo visión artificial y modelos de lenguaje.
+    \item Implementar un modelo que integre MediaPipe para la detección de landmarks, LSTM para el análisis secuencial y LLM para la generación de traducciones coherentes.
+    \item Evaluar la efectividad del sistema mediante métricas como precisión, similitud textual y latencia.
+\end{enumerate}
+
 
 \section{Estado del arte}
 
-Lorem ipsum dolor sit amet
-
 \subsection{Discusión Bibliográfica}
 
-Lorem ipsum dolor sit amet
+El reconocimiento de la Lengua de Señas Chilena (LSCh) ha sido un desafío técnico y social abordado en diversas investigaciones. Los primeros enfoques, como los modelos basados en Support Vector Machines (SVM), que corresponden a un conjunto de algoritmos de aprendizaje estadístico supervisado pertenecientes a la familia de los clasificadores lineales desarrollados por Vladimir Vapnik en torno al año 1995. Una SVM construye un hiperplano en un espacio de dimensionalidad muy alta y separa de forma óptima los puntos de una clase de la de otra. En el concepto de “separación óptima” es donde reside la característica fundamental de las SVM, se busca el hiperplano que tenga la máxima distancia (margen) con los puntos que estén más cerca de él mismo. Entre sus aplicaciones se encuentra el reconocimiento de email spam, escritura a mano y clasificación de imágenes.
+
+Su implementación logró altos niveles de aciertos en ambientes controlados, alcanzando un 100\% en alfabetos visuales estáticos. Sin embargo, su desempeño disminuye significativamente en entornos no controlados, con aciertos de hasta un 80\% \cite{cita3}.
+
+Este enfoque tiene algunas ventajas, como el uso eficiente de memoria, lo cual permite ser ejecutado en un dispositivo móvil Android. Sin embargo su principal limitación es que sólo puede identificar gestos estáticos, pero no secuencias de gestos, las cuales son necesarias para expresar muchos conceptos y oraciones \cite{cita4}. Otra limitación consiste en la falta de flexibilidad para funcionar bien en condiciones no ideales, por ejemplo, cuando la iluminación no es la más óptima.
+
+Un enfoque más robusto es el modelo YOLO-v9e (You Only Look Once), una red neuronal convolucional diseñada específicamente para la detección de objetos en tiempo real. Este modelo, aplicado a la identificación de gestos que representan caracteres individuales del alfabeto, ha demostrado ser altamente efectivo  en conjuntos de datos de la Lengua de Señas Norteamericana (ASL) \cite{cita5}. YOLO-v9e, optimizada para estos escenarios, reportó una precisión del 96.83\%, un recall del 92.96\%, y un mAP@0.5 del 97.84\%, validando su capacidad para reconocer gestos con alta precisión en aplicaciones prácticas \cite{cita11} Sin embargo, éste presenta limitaciones para procesar secuencias, además requiere un gran volumen de datos etiquetados con precisión para cada gesto. En cual no está disponible en el caso de la LSCh. 
+
+Ambos acercamientos tienen en común su factibilidad de ejecución en un dispositivo móvil, para permitir la portabilidad. Esta limitación la podemos superar al utilizar una arquitectura cliente-servidor que permita ejecutar el modelo de detección de las señas en un servidor con mayor capacidad computacional, y visualizar el resultado en un dispositivo móvil a través de una conexión a internet
+
+Un avance importante en la interpretación de gestos secuenciales lo representan las redes convolucionales tridimensionales (3D-CNN) han mostrado ser capaces de procesar gestos secuenciales al modelar características espacio-temporales. Estas redes ofrecen una alta precisión para interpretar secuencias complejas, pero requieren altos recursos computacionales y grandes datasets etiquetados, lo que las hace menos viables para aplicaciones en lenguas de señas con recursos limitados \cite{cita9}.
+
+Una forma eficiente de simplificar los datos de entrada del modelo es mediante la utilización de un sistema de landmarks, que sintetiza la información relevante en una serie de puntos clave, como las articulaciones y las puntas de los dedos. Estos landmarks actúan como una representación estructurada y compacta de los gestos, eliminando información redundante y preservando las características esenciales del movimiento. Este enfoque no solo optimiza el procesamiento de datos al reducir la complejidad del modelo, sino que también mejora la precisión en la identificación de gestos al proporcionar un conjunto consistente de referencias visuales que representan los movimientos de las manos de manera precisa \cite{cita6}.
+
+Una vez superado el reto de identificar secuencias de gestos, permanece el reto de traducir al castellano de forma fluida y coherente. Un acercamiento que puede ser beneficioso en esta etapa, es la integración de un LLM. 
+
+Los Modelos de Lenguaje de Gran Escala permiten interpretar variaciones en las señas dentro del contexto de frases completas, ofreciendo traducciones más precisas y coherentes que trascienden la mera clasificación de gestos individuales. El método SignLLM, basado en este enfoque, fue evaluado en los conjuntos de datos PHOENIX-2014T (lengua de señas alemana) y CSL-Daily (lengua de señas china), logrando resultados destacados. En PHOENIX-2014T, el modelo alcanzó una puntuación BLEU-4 de 25.25 en el conjunto de validación y 23.40 en el de prueba, mientras que en CSL-Daily obtuvo 12.23 y 15.75, respectivamente. Además, las puntuaciones ROUGE, que evalúan la recuperación del contenido clave, fueron de 47.23 (validación) y 44.49 (prueba) en PHOENIX-2014T, y de 39.18 (validación) y 39.91 (prueba) en CSL-Daily. Estas métricas demuestran que SignLLM logra mantener un equilibrio entre la precisión gramatical y la coherencia semántica, destacando su efectividad en comparación con otros métodos gloss-free que no utilizan glosas \cite{cita10}.
+
 
 \subsection{Marco Teórico}
 
-Lorem ipsum dolor sit amet
+El marco teórico aborda las tecnologías clave que sustentan la interpretación automatizada de la Lengua de Señas Chilena (LSCh), incluyendo MediaPipe, redes LSTM, modelos de lenguaje natural (LLM), métricas de evaluación y una arquitectura cliente-servidor, que veremos a continuación, fundamentales para garantizar la precisión y eficiencia del sistema.
+
+\subsubsection{MediaPipe y Procesamiento de Gestos}
+
+MediaPipe es una herramienta de visión artificial que permite la detección en tiempo real de landmarks o puntos clave en las manos, como articulaciones y puntas de los dedos. Su diseño eficiente lo hace adecuado para dispositivos con recursos computacionales limitados, proporcionando datos estructurados que facilitan el análisis de gestos. 
+
+\subsubsection{Procesamiento Secuencial: Redes LSTM}
+
+Las redes LSTM (Long Short-Term Memory) son una variante de redes neuronales recurrentes diseñadas para modelar secuencias temporales y resolver problemas de aprendizaje a largo plazo. Utilizan tres puertas: olvido, entrada y salida, para controlar el flujo de información, permitiendo conservar información relevante y descartar datos innecesarios.
+
+\subsubsection{Categorical Crossentropy}
+
+La Categorical Crossentropy es una función de pérdida ampliamente utilizada en tareas de clasificación multiclase para medir la discrepancia entre la distribución predicha por un modelo (q(x)) y la distribución real (p(x)). Matemáticamente, se define como
+
+\[
+H(p,q) = - \sum_{x \in X} p(x) \log(q(x))
+\]
+
+\subsubsection{Adam (Adaptive Moment Estimation)}
+
+Algoritmo de optimización que ajusta dinámicamente las tasas de aprendizaje utilizando promedios móviles de gradientes y sus cuadrados para mejorar la eficiencia del entrenamiento.
+
+\subsubsection{Early Stopping}
+
+Early Stopping es una técnica de regularización que monitorea el rendimiento de un modelo en un conjunto de validación durante el entrenamiento. Su objetivo es identificar el momento óptimo para detener el entrenamiento antes de que el modelo comience a sobre ajustarse a los datos de entrenamiento. 
+
+\subsubsection{Modelos de Lenguaje Natural: LLM}
+
+Los modelos de lenguaje de gran escala son sistemas entrenados en grandes corpus textuales para generar texto coherente y contextualizado. Estos modelos incorporan el contexto semántico de las palabras, lo que les permite producir traducciones fluidas y adaptadas a estructuras gramaticales complejas.
+
+\subsubsection{Métricas de Evaluación}
+
+En este proyecto, se emplearon tres métricas clave: la precisión (accuracy), que mide el porcentaje de predicciones correctas realizadas por el modelo; la función de pérdida categorical crossentropy, utilizada para evaluar la diferencia entre las distribuciones predicha y real en problemas de clasificación multiclase; y la distancia de Levenshtein, que calcula la similitud entre cadenas de texto al medir las transformaciones necesarias, como inserciones, eliminaciones o sustituciones, para convertir una cadena en otra. 
+
+\subsubsection{Arquitectura Cliente-Servidor}
+
+La arquitectura cliente-servidor es un modelo de diseño computacional que distribuye tareas entre un cliente (dispositivo del usuario) y un servidor centralizado. El cliente captura y envía datos al servidor, que los procesa utilizando modelos de inteligencia artificial y devuelve los resultados. Este diseño garantiza la escalabilidad y optimiza los recursos, permitiendo que el cliente realice operaciones ligeras mientras el servidor asume la carga computacional más intensiva.
+
+\subsubsection{Arquitectura de YOLOv9}
+
+YOLOv9 está optimizado para la detección de objetos en tiempo real mediante tres componentes clave: Backbone, que extrae características iniciales; Neck, que refina estas características para detección multi-escala; y Head, que predice cajas delimitadoras y probabilidades de clase para objetos de distintos tamaños.
+
+Un elemento crucial es la fórmula de Confidence Score, que evalúa la calidad de las predicciones:
+
+\[
+\text{Confidence (C)} = P(\text{Object}) \times \text{IoU}_{\text{truth, pred}}
+\]
+
+Aquí, P(Object) representa la probabilidad de que haya un objeto en la caja predicha, mientras que IoUtruth mide la superposición entre la caja predicha y la caja verdadera.
+
+\subsubsection{Arquitectura de SVM}
+
+Las Máquinas de Soporte Vectorial (SVM) son modelos matemáticos utilizados en el aprendizaje automático para resolver problemas de clasificación, regresión y detección de anomalías. Basadas en principios geométricos y matemáticos robustos, las SVM se destacan por su capacidad para encontrar soluciones óptimas incluso en escenarios complejos y de alta dimensionalidad.  Su funcionamiento se organiza en etapas bien definidas que forman una especie de "flujo de arquitectura:
+
+Figura 6. Arquitectura de Flujo del SVM
+El objetivo de la SVM es encontrar el hiperplano que maximiza el margen, formulado como un problema de optimización.
+
 
 \section{Modelo Propuesto: LSTM + Hand landmarker + LLM}
 
