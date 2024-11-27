@@ -11,7 +11,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense, Dropout
+from tensorflow.keras.layers import LSTM, Dense, Dropout, Bidirectional
 from tensorflow.keras.callbacks import EarlyStopping
 import tensorflow as tf
 
@@ -159,9 +159,9 @@ def train_model(output = './hand_detection.h5'):
 
   # Paso 3: Entrenar el Modelo LSTM
   model = Sequential([
-    Bidirectional(LSTM(64, return_sequences=True, activation='relu'), input_shape=(X_train.shape[1], X_train.shape[2])),
-    Bidirectional(LSTM(64, activation='relu')),
-    Dense(128, activation='relu'),
+    Bidirectional(LSTM(64, return_sequences=True, activation='tanh'), input_shape=(X_train.shape[1], X_train.shape[2])),
+    Bidirectional(LSTM(64, activation='tanh')),
+    Dense(128, activation='tanh'),
     Dropout(0.5),
     Dense(y_train.shape[1], activation='softmax')
   ])
@@ -172,7 +172,7 @@ def train_model(output = './hand_detection.h5'):
   early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
   # Entrenar el modelo con más épocas y logs detallados
-  model.fit(X_train, y_train, epochs=100, batch_size=32, validation_data=(X_test, y_test), verbose=2, callbacks=[early_stopping])
+  model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=2, callbacks=[early_stopping])
 
   # Guardar el modelo entrenado
   model.save(output)

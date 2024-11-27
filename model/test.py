@@ -9,7 +9,7 @@ import json
 
 COORDS_SIZE = 21
 TOTAL_POINTS = COORDS_SIZE * 3 * 2 # 21 points * 3 coordinates * 2 hands
-CONFIDENCE_THRESHOLD = 0.4
+CONFIDENCE_THRESHOLD = 0.6
 SEQUENCE_LENGTH = 30
 
 mp_hands = mp.solutions.hands
@@ -68,8 +68,6 @@ def test_model(model_path = './hand_detection.h5'):
         if len(frame_sequence) == SEQUENCE_LENGTH:
           input_data = np.array(frame_sequence).reshape(1, SEQUENCE_LENGTH, TOTAL_POINTS)
           prediction = model.predict(input_data)
-
-          print(prediction)
 
           confidence = np.max(prediction)
           predicted_label = label_encoder.inverse_transform([np.argmax(prediction)])[0]

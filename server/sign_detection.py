@@ -2,6 +2,7 @@ import cv2
 import mediapipe as mp
 import numpy as np
 import base64
+import json
 
 # Define image size
 IMAGE_WIDTH = 640
@@ -35,8 +36,8 @@ def detect_hand_landmarks(data):
           frame,
           hand_landmarks,
           mp_hands.HAND_CONNECTIONS,
-          mp_drawing.DrawingSpec(color=(0,0,0), thickness=4, circle_radius=2),
-          mp_drawing.DrawingSpec(color=(0,0,0), thickness=4, circle_radius=2),
+          mp_drawing.DrawingSpec(color=(0,0,0), thickness=2, circle_radius=2),
+          mp_drawing.DrawingSpec(color=(0,0,0), thickness=2, circle_radius=2),
   )
   
   _, buffer = cv2.imencode('.jpg', frame)

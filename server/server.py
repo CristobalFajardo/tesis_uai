@@ -2,6 +2,7 @@ import socketio
 import flask
 from aiohttp import web
 from sign_detection import detect_hand_landmarks
+from sklearn.preprocessing import LabelEncoder
 import base64
 
 # Initialize Flask and Socket.IO
