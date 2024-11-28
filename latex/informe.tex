@@ -92,9 +92,23 @@ El marco teórico aborda las tecnologías clave que sustentan la interpretación
 
 MediaPipe es una herramienta de visión artificial que permite la detección en tiempo real de landmarks o puntos clave en las manos, como articulaciones y puntas de los dedos. Su diseño eficiente lo hace adecuado para dispositivos con recursos computacionales limitados, proporcionando datos estructurados que facilitan el análisis de gestos. 
 
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/HandLandMarksMediaPipe.png}
+		\caption{Hand landmarks de MediaPipe}
+		\label{fig1}
+\end{figure}
+
 \subsubsection{Procesamiento Secuencial: Redes LSTM}
 
 Las redes LSTM (Long Short-Term Memory) son una variante de redes neuronales recurrentes diseñadas para modelar secuencias temporales y resolver problemas de aprendizaje a largo plazo. Utilizan tres puertas: olvido, entrada y salida, para controlar el flujo de información, permitiendo conservar información relevante y descartar datos innecesarios.
+
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/modRepLSTM.png}
+		\caption{Módulo de repetición en un LSTM}
+		\label{fig2}
+\end{figure}
 
 \subsubsection{Categorical Crossentropy}
 
@@ -112,9 +126,23 @@ Algoritmo de optimización que ajusta dinámicamente las tasas de aprendizaje ut
 
 Early Stopping es una técnica de regularización que monitorea el rendimiento de un modelo en un conjunto de validación durante el entrenamiento. Su objetivo es identificar el momento óptimo para detener el entrenamiento antes de que el modelo comience a sobre ajustarse a los datos de entrenamiento. 
 
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/EarlyStopping.png}
+		\caption{Grafico Early Stopping}
+		\label{fig3}
+\end{figure}
+
 \subsubsection{Modelos de Lenguaje Natural: LLM}
 
 Los modelos de lenguaje de gran escala son sistemas entrenados en grandes corpus textuales para generar texto coherente y contextualizado. Estos modelos incorporan el contexto semántico de las palabras, lo que les permite producir traducciones fluidas y adaptadas a estructuras gramaticales complejas.
+
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/Gpt_style_Transformer.png}
+		\caption{Esquema de modelo transformer como gpt-4o mini}
+		\label{fig4}
+\end{figure}
 
 \subsubsection{Métricas de Evaluación}
 
@@ -136,11 +164,24 @@ Un elemento crucial es la fórmula de Confidence Score, que evalúa la calidad d
 
 Aquí, P(Object) representa la probabilidad de que haya un objeto en la caja predicha, mientras que IoUtruth mide la superposición entre la caja predicha y la caja verdadera.
 
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/yolov9.png}
+		\caption{Arquitectura de funcionamiento del modelo YOLOv9}
+		\label{fig5}
+\end{figure}
+
 \subsubsection{Arquitectura de SVM}
 
 Las Máquinas de Soporte Vectorial (SVM) son modelos matemáticos utilizados en el aprendizaje automático para resolver problemas de clasificación, regresión y detección de anomalías. Basadas en principios geométricos y matemáticos robustos, las SVM se destacan por su capacidad para encontrar soluciones óptimas incluso en escenarios complejos y de alta dimensionalidad.  Su funcionamiento se organiza en etapas bien definidas que forman una especie de "flujo de arquitectura:
 
-Figura 6. Arquitectura de Flujo del SVM
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/flujoSVM.png}
+		\caption{Arquitectura de flujo del SVM}
+		\label{fig6}
+\end{figure}
+
 El objetivo de la SVM es encontrar el hiperplano que maximiza el margen, formulado como un problema de optimización.
 
 
@@ -162,13 +203,64 @@ El tercer componente consiste en utilizar gpt-3.5-turbo, para derivar oraciones 
     \centering
     \includegraphics[width=5in]{figuras/architecture-diagram.png}
 		\caption{Diagrama de bloques de la arquitectura propuesta}
-		\label{fig1}
+		\label{fig7}
 \end{figure}
 
 \section{Experimentos}
 
 En esta sección se describe el diseño y configuración de los experimentos realizados para validar la hipótesis.
 
+\subsection{ Conjunto de datos y configuración de los experimentos }
+\subsection{ Entrenamiento y validación }
+
+Para entrenar el modelo, se han elegido 20 etiquetas correspondientes a 20 palabras o frases (una de las etiquetas es “por favor” que son dos palabras). Estas frases fueron elegidas en base a dos criterios: el primero, por su simplicidad, ya que representan conceptos básicos, y segundo, por su versatilidad, ya que pueden ser permutadas de distintas maneras para obtener oraciones simples.
+
+Etiquetas elegidas: por favor, gracias, nombre, yo, tú, bien, sentir, cómo, gustar, ver, hola, permiso, bueno, día, tarde, noche, enamorado, comer, conversar, médico.
+
+Como set de datos se han utilizado 50 videos por cada etiqueta, algunos de estos fueron recopilados desde repositorios de dominio público disponibles en la web, y otros fueron capturados de forma propia con una cámara. Para su captura, se grabaron con distintos participantes, y con distintas condiciones de iluminación para evitar el sobreajuste. 
+La razón por la que se recopilaron los datos de esta forma es debido a la falta de disponibilidad de un dataset completo y especializado para la lengua de señas chilena.  Esta muestra dista de ser ideal, ya que no es muy extensa, sin embargo se procedió a utilizar data augmentation, introduciendo variaciones en las coordenadas de los hand landmarks, como rotación y traslación para triplicar la cantidad de datos de entrenamiento.
+
+Las métricas seleccionadas en los experimentos para medir el rendimiento de los modelos son: tasa de acierto, para las etiquetas individuales, la distancia de Levenshtein (dividida entre la longitud de la oración) para comparar la oración final obtenida, con la oración esperada, y la latencia o tiempo de respuesta entre el cliente y el servidor.
+\subsection{ Configuración de experimentos}
+
+Diseño: Para construir el algoritmo se utilizó Python como lenguaje y para el diseño de la arquitectura de la red neuronal. Como plataforma de desarrollo se utilizó Visual Studio Code.
+El código es ejecutado en instancia de Google Cloud Platform con una GPU Nvidia T4 con 15 GB de RAM.
+
+Datasets: dataset de elaboración propia  conformado por 1.000 videos en formato mp4, con una resolución de 640x480. 50 videos por cada etiqueta.
+
+Se realizaron tres tipos de experimento: 
+\subsection{ Entrenamiento y pruebas del modelo LSTM + Hand Landmarks}
+Se procede a capturar hand landmarks para cada video y a utilizar estos datos para entrenar el modelo LSTM. Los datos son divididos en 80\% para entrenamiento y 20\% para pruebas. Se define una función de pérdida categórica y una métrica de precisión para evaluar el rendimiento. El entrenamiento usa un callback de EarlyStopping para detenerse si la pérdida de validación deja de mejorar durante 10 épocas, lo que previene el sobreentrenamiento. 
+
+A continuación se prueban distintos hiperparámetros, para evaluar el desempeño, en base a la tasa de acierto respecto a los datos de prueba.
+
+\subsection{ Pruebas de LLMs }
+Se probaron diferentes modelos de lenguaje de gran escala para comparar el resultado obtenido con la oración esperada, utilizando la distancia de Levenshtein, dividida entre la longitud de la oración esperada, y así obtener el porcentaje de coincidencia.
+
+P = (1 -levenshtein(E, A) / max(len(E), len(A)) * 100
+
+Donde E es la oración esperada, A es la oración obtenida por el LLM, levenshtein es la función de distancia de Levenshtein, max es la función de máximo, y len es la longitud de la cadena de texto.
+
+Como métrica secundaria a evaluar, está el tiempo de respuesta, medido en milisegundos, de forma que se consiga un balance entre precisión y velocidad.
+
+Para llevar a cabo este experimento, se utilizó el Playground de openai, y también la herramienta groqcloud, ambas opciones consisten en una interfaz web, que permite introducir prompts al modelo de lenguaje, y visualizar la salida obtenida, junto con el tiempo de respuesta.
+
+\subsection{ Integración y latencia Cliente-Servidor }
+Se implementó un prototipo del intercambio de datos entre el cliente y el servidor, ejecutando un sitio web implementado con Javascript/React, ejecutado en el navegador Google Chrome para enviar la secuencia de imágenes capturadas por la webcam, correspondiente a la seña para la palabra “gracias” via WebSockets, de manera que puedan ser procesadas en el servidor y retornar como respuesta al cliente la oración resultante de ejecutar los componentes presentados en el punto 4.1 sobre dicha secuencia de imágenes.
+
+La métrica a considerar es la latencia, definida como el tiempo en milisegundos, transcurrido desde que se empieza a enviar la última imagen de la secuencia hasta que llega la respuesta al cliente. Para este experimento se simulan diferentes velocidades de conexión utilizando las herramientas para desarrolladores de Google Chrome.
+
+Para ejecutar este experimento de forma automatizada, se utiliza un script de automatización de navegador utilizando la librería puppeteer, para poder ejecutar 1000 iteraciones.
+
+\begin{figure}[!hbtp]
+    \centering
+    \includegraphics[width=5in]{figuras/secuenciaClienteServidor.png}
+		\caption{Diagrama de secuencia cliente-servidor}
+		\label{fig5}
+\end{figure}
+
+\subsection{ Comparación de costos}
+Finalmente, se evalúan los costos de implementación del sistema, para comparar con el costo por hora de contratar un intérprete profesional de señas.
 
 \section{Resultados}
 
