@@ -1,16 +1,30 @@
 \documentclass{article}
 
-\usepackage[style=numeric]{biblatex}
 \usepackage{graphicx}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage[spanish]{babel}
+
+
 
 \renewcommand{\abstractname}{Resumen}
 \renewcommand{\refname}{Bibliografía}
 \setlength{\parskip}{1em}
 \setlength{\parindent}{0em}
-\usepackage{amsmath}
+
+% Profundidad de numeración para subsubsubsection
+\setcounter{secnumdepth}{4}
+
+% Definir estilo y espaciado de \subsubsubsection
+\titleclass{\subsubsubsection}{straight}[\subsection]
+\newcounter{subsubsubsection}[subsubsection]
+\renewcommand\thesubsubsubsection{\thesubsubsection.\arabic{subsubsubsection}}
+\titleformat{\subsubsubsection}
+  {\normalfont\normalsize\bfseries}{\thesubsubsubsection}{1em}{}
+\titlespacing*{\subsubsubsection}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 \begin{document}
-
 \title{COMBINANDO VISIÓN ARTIFICIAL Y MODELOS DE LENGUAJE PARA INTERPRETACIÓN DE LENGUA DE SEÑAS CHILENA (LSCh)}
 
 \author{Cristóbal Fajardo, Pablo Gaete, Rubén Torres \\ 
@@ -22,7 +36,7 @@ Profesor Guía: Juan Bekios}
 
 \begin{abstract}
 
-La escasez de intérpretes de Lengua de Señas Chilena (LSCh), especialmente en el ámbito de la salud, representa un desafío significativo para las personas sordas en Chile, dificultando el acceso a un tratamiento adecuado particularmente en el área de la salud mental. En este trabajo, se propone una solución digital que ofrece una alternativa accesible y de menor costo en comparación con los intérpretes profesionales. Nuestra propuesta combina la detección de puntos clave de las manos (hand landmark detection) con redes neuronales LSTM, complementadas por un modelo de lenguaje de gran escala (LLM) para lograr una mayor fluidez al transformar señas individuales en oraciones completa
+La escasez de intérpretes de Lengua de Señas Chilena (LSCh), especialmente en el ámbito de la salud, representa un desafío significativo para las personas sordas en Chile, dificultando el acceso a un tratamiento adecuado particularmente en el área de la salud mental. En este trabajo, se propone una solución digital que ofrece una alternativa accesible y de menor costo en comparación con los intérpretes profesionales. Nuestra propuesta combina la detección de puntos clave de las manos (hand landmark detection) con redes neuronales LSTM, complementadas por un modelo de lenguaje de gran escala (LLM) para lograr una mayor fluidez al transformar señas individuales en oraciones completa.
 
 El sistema ha demostrado una tasa de acierto del 92.5\% en el reconocimiento de palabras individuales y una similitud del 96.35\% comparado con las frases esperadas (utilizando la distancia de Levenshtein) en la traducción de frases completas. Además, utiliza una arquitectura cliente-servidor, que asegura escalabilidad y accesibilidad desde dispositivos con recursos limitados. A pesar de estos resultados prometedores, áreas como la ampliación del dataset y la reducción de latencia siguen siendo desafíos clave para el desarrollo futuro.
 
@@ -73,7 +87,7 @@ Este enfoque tiene algunas ventajas, como el uso eficiente de memoria, lo cual p
 
 Un enfoque más robusto es el modelo YOLO-v9e (You Only Look Once), una red neuronal convolucional diseñada específicamente para la detección de objetos en tiempo real. Este modelo, aplicado a la identificación de gestos que representan caracteres individuales del alfabeto, ha demostrado ser altamente efectivo  en conjuntos de datos de la Lengua de Señas Norteamericana (ASL) \cite{cita5}. YOLO-v9e, optimizada para estos escenarios, reportó una precisión del 96.83\%, un recall del 92.96\%, y un mAP@0.5 del 97.84\%, validando su capacidad para reconocer gestos con alta precisión en aplicaciones prácticas \cite{cita11} Sin embargo, éste presenta limitaciones para procesar secuencias, además requiere un gran volumen de datos etiquetados con precisión para cada gesto. En cual no está disponible en el caso de la LSCh. 
 
-Ambos acercamientos tienen en común su factibilidad de ejecución en un dispositivo móvil, para permitir la portabilidad. Esta limitación la podemos superar al utilizar una arquitectura cliente-servidor que permita ejecutar el modelo de detección de las señas en un servidor con mayor capacidad computacional, y visualizar el resultado en un dispositivo móvil a través de una conexión a internet
+Ambos acercamientos tienen en común su factibilidad de ejecución en un dispositivo móvil, para permitir la portabilidad. Esta limitación la podemos superar al utilizar una arquitectura cliente-servidor que permita ejecutar el modelo de detección de las señas en un servidor con mayor capacidad computacional, y visualizar el resultado en un dispositivo móvil a través de una conexión a internet.
 
 Un avance importante en la interpretación de gestos secuenciales lo representan las redes convolucionales tridimensionales (3D-CNN) han mostrado ser capaces de procesar gestos secuenciales al modelar características espacio-temporales. Estas redes ofrecen una alta precisión para interpretar secuencias complejas, pero requieren altos recursos computacionales y grandes datasets etiquetados, lo que las hace menos viables para aplicaciones en lenguas de señas con recursos limitados \cite{cita9}.
 
@@ -110,14 +124,6 @@ Las redes LSTM (Long Short-Term Memory) son una variante de redes neuronales rec
 		\label{fig2}
 \end{figure}
 
-\subsubsection{Categorical Crossentropy}
-
-La Categorical Crossentropy es una función de pérdida ampliamente utilizada en tareas de clasificación multiclase para medir la discrepancia entre la distribución predicha por un modelo (q(x)) y la distribución real (p(x)). Matemáticamente, se define como
-
-\[
-H(p,q) = - \sum_{x \in X} p(x) \log(q(x))
-\]
-
 \subsubsection{Adam (Adaptive Moment Estimation)}
 
 Algoritmo de optimización que ajusta dinámicamente las tasas de aprendizaje utilizando promedios móviles de gradientes y sus cuadrados para mejorar la eficiencia del entrenamiento.
@@ -146,15 +152,46 @@ Los modelos de lenguaje de gran escala son sistemas entrenados en grandes corpus
 
 \subsubsection{Métricas de Evaluación}
 
-En este proyecto, se emplearon tres métricas clave: la precisión (accuracy), que mide el porcentaje de predicciones correctas realizadas por el modelo; la función de pérdida categorical crossentropy, utilizada para evaluar la diferencia entre las distribuciones predicha y real en problemas de clasificación multiclase; y la distancia de Levenshtein, que calcula la similitud entre cadenas de texto al medir las transformaciones necesarias, como inserciones, eliminaciones o sustituciones, para convertir una cadena en otra. 
+En este proyecto, se utilizaron métricas clave para evaluar el desempeño del modelo en las tareas de clasificación y traducción, garantizando resultados precisos y relevantes. Estas métricas en conjunto ofrecen una visión integral del desempeño del modelo, abarcando tanto el nivel de predicciones individuales como la calidad semántica de las frases completas.
+
+\subsubsubsection{Precisión (Accuracy)}
+
+La precisión mide el porcentaje de predicciones correctas realizadas por el modelo, considerando tanto las clases positivas como negativas. Se define como:
+
+\[
+\text{Accuracy} \left( \frac{\text{correct classifications}}{\text{total classifications}} \right) = \frac{TP + TN}{TP + TN + FP + FN}
+\]
+
+Donde TP (True Positives) representa los verdaderos positivos, TN (True Negatives) los verdaderos negativos, FP (False Positives) los falsos positivos, y FN (False Negatives) los falsos negativos. Esta métrica proporciona una visión general del rendimiento global del modelo, aunque puede no ser adecuada en escenarios con conjuntos de datos desbalanceados.
+
+\subsubsubsection{Función de Pérdida Categorical Crossentropy}
+
+La categorical crossentropy mide la discrepancia entre las distribuciones predicha y real en problemas de clasificación multiclase. Matemáticamente, se define como:
+
+\[
+H(p,q) = - \sum_{x \in X} p(x) \log(q(x))
+\]
+
+Donde p(x) representa la distribución real y q(x) la predicción del modelo para cada clase x. Esta función penaliza más las predicciones incorrectas que las correctas, incentivando al modelo a aprender distribuciones precisas para cada clase.      
+
+\subsubsubsection{Distancia de Levenshtein}
+
+La distancia de Levenshtein evalúa la similitud entre cadenas de texto, calculando el número mínimo de operaciones (inserciones, eliminaciones o sustituciones) necesarias para transformar una cadena en otra. La métrica empleada es:
+
+\[
+P = \left(1 - \frac{\text{levenshtein}(E, A)}{\max(\text{len}(E), \text{len}(A))}\right) \times 100
+\]
+
+Donde E representa la cadena esperada, A la cadena predicha, levenshtein(E,A) es la distancia de Levenshtein entre E y A, len() indica la longitud de una cadena. Esta métrica es fundamental para evaluar traducciones textuales, ya que mide la precisión con la que las frases predichas se corresponden con las esperadas.
+
 
 \subsubsection{Arquitectura Cliente-Servidor}
 
 La arquitectura cliente-servidor es un modelo de diseño computacional que distribuye tareas entre un cliente (dispositivo del usuario) y un servidor centralizado. El cliente captura y envía datos al servidor, que los procesa utilizando modelos de inteligencia artificial y devuelve los resultados. Este diseño garantiza la escalabilidad y optimiza los recursos, permitiendo que el cliente realice operaciones ligeras mientras el servidor asume la carga computacional más intensiva.
 
-\subsubsection{Arquitectura de YOLOv9}
+\subsubsection{Arquitectura de YOLO-v9e}
 
-YOLOv9 está optimizado para la detección de objetos en tiempo real mediante tres componentes clave: Backbone, que extrae características iniciales; Neck, que refina estas características para detección multi-escala; y Head, que predice cajas delimitadoras y probabilidades de clase para objetos de distintos tamaños.
+YOLO-v9e está optimizado para la detección de objetos en tiempo real mediante tres componentes clave: Backbone, que extrae características iniciales; Neck, que refina estas características para detección multi-escala; y Head, que predice cajas delimitadoras y probabilidades de clase para objetos de distintos tamaños.
 
 Un elemento crucial es la fórmula de Confidence Score, que evalúa la calidad de las predicciones:
 
@@ -167,7 +204,7 @@ Aquí, P(Object) representa la probabilidad de que haya un objeto en la caja pre
 \begin{figure}[!hbtp]
     \centering
     \includegraphics[width=5in]{figuras/yolov9.png}
-		\caption{Arquitectura de funcionamiento del modelo YOLOv9}
+		\caption{Arquitectura de funcionamiento del modelo YOLO-v9e}
 		\label{fig5}
 \end{figure}
 
@@ -187,7 +224,7 @@ El objetivo de la SVM es encontrar el hiperplano que maximiza el margen, formula
 
 \section{Modelo Propuesto: LSTM + Hand landmarker + LLM}
 
-En esta sección se describe el modelo a utilizar para probar la hipótesis. A diferencia de los modelos SVG o YOLO, discutidos en el capítulo 2.1, la red LSTM puede capturar datos históricos de la secuencia de imágenes para poder interpretar señas y gestos de manera dinámica. Para el entrenamiento, se utilizarán datos de hand landmarks derivados del conjunto de datos original, de esta manera se descarta parte del ruido y se sintetiza información relevante.
+En esta sección se describe el modelo a utilizar para probar la hipótesis. A diferencia de los modelos SVM o YOLO-v9e, discutidos en el capítulo 2.1, la red LSTM puede capturar datos históricos de la secuencia de imágenes para poder interpretar señas y gestos de manera dinámica. Para el entrenamiento, se utilizarán datos de hand landmarks derivados del conjunto de datos original, de esta manera se descarta parte del ruido y se sintetiza información relevante.
 
 Utilizando este mecanismo se pueden identificar gestos que corresponden a palabras o frases individuales. Al agrupar listas de palabras que forman una oración, el siguiente paso consiste en usarlas como entrada al LLM gpt-3.5-turbo, junto con un prompt que permita obtener una frase con la fluidez propia del lenguaje hablado.
 
@@ -195,7 +232,7 @@ Utilizando este mecanismo se pueden identificar gestos que corresponden a palabr
 
 La arquitectura propuesta está compuesta por tres componentes principales. El primero, una capa de MediaPipe hand landmarker, para obtener la lista de coordenadas de los puntos clave para cada mano.
 
-El segundo componente es una red LSTM, que combina capas bidireccionales LSTM y densas para procesar datos secuenciales. La primera capa LSTM bidireccional captura patrones temporales en ambas direcciones y devuelve secuencias completas para la siguiente capa. La segunda LSTM bidireccional resume la información en una representación compacta. Luego, una capa densa con 128 neuronas y activación ReLU permite aprender relaciones no lineales, seguida de un Dropout del 50% para evitar sobreajuste. Finalmente, una capa densa con activación softmax produce probabilidades para las clases objetivo.
+El segundo componente es una red LSTM, que combina capas bidireccionales LSTM y densas para procesar datos secuenciales. La primera capa LSTM bidireccional captura patrones temporales en ambas direcciones y devuelve secuencias completas para la siguiente capa. La segunda LSTM bidireccional resume la información en una representación compacta. Luego, una capa densa con 128 neuronas y activación ReLU permite aprender relaciones no lineales, seguida de un Dropout del 50\% para evitar sobreajuste. Finalmente, una capa densa con activación softmax produce probabilidades para las clases objetivo.
 
 El tercer componente consiste en utilizar gpt-3.5-turbo, para derivar oraciones fluidas, dada una lista de palabras, y el prompt “Convierte la siguiente secuencia de palabras de lengua de señas chilena a una frase en español coherente”
 
